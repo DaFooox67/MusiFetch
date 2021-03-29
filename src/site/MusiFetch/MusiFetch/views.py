@@ -1,16 +1,18 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.core.validators import *
 import sys
 from fingerprints import fingerprints_generator
 
 sys.path.append("..")  # Adds higher directory to python modules path.
 
 
-# Done
-def connection(request):
+# routes
+
+def login_view(request):
     if request.method == 'POST':
         username = request.POST['login']
         password = request.POST['password']
@@ -25,17 +27,30 @@ def connection(request):
 
 def register(request):
     if request.method == 'POST':
-        # email = request.POST['email']
+        email = request.POST['email']
         username = request.POST['username']
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
-        if password == confirm_password:
+        donnees = [email, username, password, confirm_password]
+        errors = validatorRegister(donnees)
+        if errors == {}:
             try:
-                User.objects.create_user(username, None, password)
+                User.objects.create_user(username, email, password)
+                messages.success(request, 'Account was successfully created. Welcome, ' + username + '!')
+                return redirect('/home')
             except:
-                html = "<html><body>Erreur</body></html>"
+                html = "<html><body>Erreur inconnue</body></html>"
                 return HttpResponse(html)
+        else:
+            errors['keep_email'] = email
+            errors['keep_username'] = username
+            return render(request, 'home/register.html', errors)
     return render(request, 'home/register.html')
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('/home')
 
 
 def find(request):
@@ -61,3 +76,31 @@ def create(request):
         algo.choice("create", ytb_link)
 
     return redirect('/home')
+
+
+# external functions
+
+def validatorRegister(donnees):
+    errors = {}
+
+    # email
+    try:
+        validate_email(donnees[0])
+    except ValidationError:
+        errors['email_error'] = 'Please enter a valid email address'
+
+    # username
+    if len(donnees[1]) < 4:
+        errors['username_error'] = 'Username must contain at least 4 character'
+    elif len(donnees[1]) > 16:
+        errors['username_error'] = 'Username cannot contain more than 16 character'
+
+    # password
+    if len(donnees[2]) < 6:
+        errors['password_error'] = 'Password must contain at least 6 character'
+
+    # confirm password
+    if donnees[2] != donnees[3]:
+        errors['confirm_password_error'] = 'Passwords do not match'
+
+    return errors

@@ -2,7 +2,7 @@
 
 .musifetch {
     background-color: var(--color-pink2);
-    height: 722px;
+    height: 750px;
 }
 
 .title {
@@ -70,9 +70,21 @@
 	color: var(--color-purple-text);
 }
 
-/* Login unique properties */
-
 .options {
 	font-size: 22px;
 	color: var(--color-grey-options);
+}
+
+/* Register errors */
+
+.email {
+
+}
+
+.username {
+
+}
+
+.password {
+
 }
