@@ -18,22 +18,26 @@
                     <h1 class="title"><a href="/home/">MusiFetch</a></h1>
                     <h2 class="subtitle">The tool you ever looked for</h2>
                 </div>
+                <div>
+                    {{ email_error }}
+                    {{ username_error }}
+                    {{ password_error }}
+                    {{ confirm_password_error }}
+                </div>
             </div>
             <div class="col-sm-5 form">
                 <div class="container text-center pt-5">
                     <form action="/register/" method="POST">
                         {% csrf_token %}
-<!--                        <input id="email" name="email" class="input" type="text" placeholder="Email">-->
-                        <input id="username" name="username" class="input" type="text" placeholder="Username">
+                        <input id="email" name="email" class="input" type="text" value="{{ keep_email }}"placeholder="Email">
+                        <input id="username" name="username" class="input" type="text" value="{{ keep_username }}" placeholder="Username">
                         <input id="password" name="password" class="input" type="password" placeholder="Password">
                         <input id="confirm_password" name="confirm_password" class="input" type="password" placeholder="Confirm password">
                         <button type="submit" class="valid-registration">Register</button>
                     </form>
-<!--                    {% if bad_confirm_password %}-->
-<!--                        <div class="pt-3 error">-->
-<!--                            {{ bad_confirm_password }}-->
-<!--                        </div>-->
-<!--                    {% endif %}-->
+                    <div class="options pt-2">
+                        <a href="/connection/">Already have an account ?</a><br>
+                    </div>
                 </div>
             </div>
         </div>
